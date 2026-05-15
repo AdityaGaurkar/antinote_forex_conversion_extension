@@ -10,6 +10,8 @@
         name: extensionName,
         version: "1.0.0",
         author: "Aditya Gaurkar",
+        endpoints: ["https://api.frankfurter.dev/v1"],
+        requiredAPIKeys:[],
         category: "Utility",
         dataScope: "none"
     });
@@ -26,28 +28,37 @@
         extension: extensionRoot
     });
 
-    fx.execute = function(payload){
-
-        const [amount, fromCurrency, toCurrency] = this.getParsedParams(payload);
-        const from = fromCurrency.toUpperCase();
-        const to = toCurrency.toUpperCase();
-
-        if (from === to) {
-            return new ReturnObject({status: "error", message: `${amount} ${from} is equal to ${amount} ${to}`});
-        }
-
-        function convert(amount) {
-            return amount * 95.90;
-        }
-
-        const result = convert(amount);
-        
-        return new ReturnObject({status: "success", message: "retrieved", payload: `${result} ${to}`});
-    }
-
     // fx.execute = function(payload){
-    // return new ReturnObject({
-    //     status: "success",
-    //     payload: "IT WORKS"
-    // });
+
+    //     const [amount, fromCurrency, toCurrency] = this.getParsedParams(payload);
+    //     const from = fromCurrency.toUpperCase();
+    //     const to = toCurrency.toUpperCase();
+
+    //     if (from === to) {
+    //         return new ReturnObject({status: "error", message: `${amount} ${from} is equal to ${amount} ${to}`});
+    //     }
+
+    //     function convert(amount) {
+    //         //making the url for api call and parsing json
+    //         const url = `https://api.frankfurter.dev/v1/latest?base=${from}&symbols=${to}`;
+
+    //         //calling the api
+    //         const reply = callAPI("", url, "GET", "","");
+    //         const data = JSON.parse(reply.data);
+    //         const rate = data.rates[to];
+
+    //         //making calculation
+    //         return Math.round(amount * rate * 100) / 100;
+    //     }
+
+    //     const result = convert(amount);
+        
+    //     //return new ReturnObject({status: "error", message: JSON.stringify(reply)});
+    //     return new ReturnObject({status: "success", message: "retrieved", payload: `${result} ${to}`});
+    // }
+    fx.execute = function(payload) {
+    const url = `https://api.frankfurter.dev/v1/latest?base=USD&symbols=INR`;
+    const reply = callAPI("", url, "GET", "{}", "");
+    return new ReturnObject({status: "error", message: JSON.stringify(reply)});
+    }
 })();
