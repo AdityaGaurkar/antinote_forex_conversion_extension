@@ -3,8 +3,6 @@
 
 (function() {
     const extensionName = "fx_converter";
-    var from_default = "USD";
-    var to_default = "INR";
 
     const extensionRoot = new Extension({
         name: extensionName,
@@ -15,6 +13,31 @@
         category: "Utility",
         dataScope: "none"
     });
+
+    // // Registering preferences for default TO currencies
+    // const default_to = new Preference({
+    //     key:"to_default",
+    //     label: "Default currency to convert to",
+    //     type: "selectOne",
+    //     defaultValue: "INR",
+    //     options: ["USD", "INR", "EUR", "GBP", "JPY", "AUD", "CAD", "CHF", "CNY", "SEK"],
+    //     helpText: "Select the default currency to convert to"
+    // });
+    // extensionRoot.register_preference(default_to);
+
+    // // Registering preferences for default FROM currencies
+    // const default_from = new Preference({
+    //     key:"from_default",
+    //     label: "Default currency to convert from",
+    //     type: "selectOne",
+    //     defaultValue: "USD",
+    //     options: ["USD", "INR", "EUR", "GBP", "JPY", "AUD", "CAD", "CHF", "CNY", "SEK"],
+    //     helpText: "Select the default currency to convert from"
+    // });
+    // extensionRoot.register_preference(default_from);
+
+    // var from_default = getExtensionPreference(extensionName, "from_default");
+    // var to_default = getExtensionPreference(extensionName, "to_default");
 
     const fx = new Command({
         name: "fx",
@@ -39,16 +62,20 @@
         }
 
         function convert(amount) {
-            //making the url for api call and parsing json
-            const url = `https://api.frankfurter.dev/v1/latest?base=${from}&symbols=${to}`;
+            try{
+                //making the url for api call
+                const url = `https://api.frankfurter.dev/v1/latest?base=${from}&symbols=${to}`;
 
-            //calling the api
-            const reply = callAPI("dummy", url, "GET", "","");
-            const data = JSON.parse(reply.data);
-            const rate = data.rates[to];
+                //calling the api
+                const reply = callAPI("dummy", url, "GET", "","");
+                const data = JSON.parse(reply.data);
+                const rate = data.rates[to];
 
-            //making calculation
-            return Math.round(amount * rate * 100) / 100;
+                //making calculation
+                return Math.round(amount * rate * 100) / 100;
+            } catch (error) {
+                return `Error: ${error.message}`;
+            }
         }
 
         const result = convert(amount);
